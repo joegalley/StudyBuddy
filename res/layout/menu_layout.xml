@@ -3,12 +3,29 @@
     android:layout_height="wrap_content"
     android:orientation="vertical" >
 
-    <Button
-        android:id="@+id/studying_around_me_button"
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:hint="See who&apos;s studying around me" />
+        android:orientation="horizontal" >
+
+        <Button
+            android:id="@+id/studying_around_me_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="See who&apos;s studying around me" />
+
+        <EditText
+            android:id="@+id/enter_class_id_edittext"
+            android:layout_width="195dip"
+            android:layout_height="wrap_content"
+            android:hint="Enter class ID"
+            android:imeOptions="actionDone"
+            android:maxLength="16"
+            android:maxLines="1"
+            android:selectAllOnFocus="true"
+            android:singleLine="true" />
+    </LinearLayout>
 
     <Button
         android:id="@+id/see_open_tables_button"

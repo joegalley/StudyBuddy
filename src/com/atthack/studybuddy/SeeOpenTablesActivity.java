@@ -12,17 +12,11 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
 
-public class StudyingAroundMeActivity extends Activity {
+public class SeeOpenTablesActivity extends Activity {
 
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.studying_around_me_layout);
-
-		String CLASS_ID = "";
-		Bundle extras = getIntent().getExtras();
-		if (extras != null) {
-			CLASS_ID = extras.getString("CLASS_ID");
-		}
 
 		TextView tv_class1;
 		TextView tv_class2;
@@ -65,18 +59,11 @@ public class StudyingAroundMeActivity extends Activity {
 
 		for (int i = 0; i < course_list.length(); i++) {
 			try {
-				if (course_list.getJSONObject(i).getString("course").toString()
-						.equals(CLASS_ID.replaceAll("\\s+", ""))) {
+				if (course_list.getJSONObject(i).getString("count").toString()
+						.equals("0")) {
 
-					relevant_courses.add("Class: "
-							+ course_list.getJSONObject(i).getString("course")
-									.toString()
-							+ "      TABLE #: "
-							+ Integer.toString(course_list.getJSONObject(i)
-									.getInt("tid"))
-							+ "      PEOPLE AT TABLE: "
-							+ Integer.toString(course_list.getJSONObject(i)
-									.getInt("count")));
+					relevant_courses.add(Integer.toString(course_list
+							.getJSONObject(i).getInt("tid")));
 
 				}
 
@@ -85,18 +72,14 @@ public class StudyingAroundMeActivity extends Activity {
 			}
 		}
 
-		boolean no_one_studying = false;
-
 		if (relevant_courses.size() == 0) {
-			no_one_studying = true;
 			tv_class1.setVisibility(View.GONE);
 			tv_class2.setVisibility(View.GONE);
 			tv_class3.setVisibility(View.GONE);
 			tv_class4.setVisibility(View.GONE);
 			tv_class5.setVisibility(View.GONE);
 
-			tv_class6
-					.setText("Sorry, no one is currently studying " + CLASS_ID);
+			tv_class6.setText("Sorry, all tables are currently full ");
 
 		}
 
@@ -105,7 +88,10 @@ public class StudyingAroundMeActivity extends Activity {
 			if (relevant_courses.size() > 0) {
 				if (i < relevant_courses.size()) {
 					if (relevant_courses.get(i) != (null)) {
-						course.setText(relevant_courses.get(i).toString());
+						course.setText("Table "
+								+ relevant_courses.get(i).toString()
+								+ " is open");
+
 					}
 				}
 			}
@@ -113,8 +99,7 @@ public class StudyingAroundMeActivity extends Activity {
 		}
 
 		for (TextView course : text_views) {
-			if (!course.getText().toString().contains("PEOPLE")
-					&& !no_one_studying) {
+			if (!course.getText().toString().contains("open")) {
 				course.setVisibility(View.GONE);
 			}
 		}
