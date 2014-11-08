@@ -35,8 +35,7 @@ public class StudyingAroundMeActivity extends Activity {
 		LinkedList<String> relevant_courses = new LinkedList<String>();
 
 		try {
-			course_list = new RetrieveFromServerTask().execute(
-					"http://www.example.com").get();
+			course_list = new RetrieveFromServerTask().execute("1").get();
 
 			System.out.println("here:" + course_list);
 		} catch (InterruptedException e) {

@@ -1,13 +1,9 @@
 package com.atthack.studybuddy;
 
 import java.util.ArrayList;
+import java.util.concurrent.ExecutionException;
 
 import org.apache.http.NameValuePair;
-import org.apache.http.message.BasicNameValuePair;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import com.atthack.studybuddy.R;
 
 import android.app.Activity;
@@ -22,9 +18,12 @@ public class MenuActivity extends Activity {
 
 	private static ArrayList<NameValuePair> params = new ArrayList<NameValuePair>();
 
+	private boolean JOINING_OR_LEAVING;
+
 	private Button studying_around_me_button;
 	private Button see_open_tables_button;
 	private Button change_subject_button;
+	private Button join_table_button;
 	private Button leave_table_button;
 	private EditText enter_class_id_edittext;
 
@@ -54,7 +53,9 @@ public class MenuActivity extends Activity {
 		studying_around_me_button = (Button) findViewById(R.id.studying_around_me_button);
 		see_open_tables_button = (Button) findViewById(R.id.see_open_tables_button);
 		change_subject_button = (Button) findViewById(R.id.change_subject_button);
+		change_subject_button.setVisibility(View.GONE);
 		leave_table_button = (Button) findViewById(R.id.leave_table_button);
+		join_table_button = (Button) findViewById(R.id.join_table_button);
 		enter_class_id_edittext = (EditText) findViewById(R.id.enter_class_id_edittext);
 
 		final Intent studying_around_me_intent = new Intent(this,
@@ -87,16 +88,28 @@ public class MenuActivity extends Activity {
 			public void onClick(View arg0) {
 				System.out.println("change subject");
 
-				removeUser("1");
 			}
 		});
 
 		leave_table_button.setOnClickListener(new View.OnClickListener() {
 
 			public void onClick(View arg0) {
+				JOINING_OR_LEAVING = false;
 				System.out.println("leave table");
 
 				getNFC();
+
+			}
+		});
+
+		join_table_button.setOnClickListener(new View.OnClickListener() {
+
+			public void onClick(View arg0) {
+				JOINING_OR_LEAVING = true;
+				System.out.println("join table");
+
+				getNFC();
+
 			}
 		});
 
@@ -104,14 +117,38 @@ public class MenuActivity extends Activity {
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-
 		String s = "";
 		if (requestCode == NFC_REQUEST && resultCode == RESULT_OK) {
 			int table = Integer.parseInt(data.getStringExtra("table_num"));
-			table_number += "Scanned table is " + table;
+			table_number = "Scanned table is " + table;
 
 			Toast t = Toast.makeText(this, table_number, Toast.LENGTH_LONG);
 			t.show();
+
+			System.out.println("table" + table_number + "table");
+			try {
+				if (table_number == "" || table_number == null) {
+
+					new RemoveUserActivity().execute("11").get();
+				} else {
+					String tbl = table_number
+							.substring(table_number.length() - 1);
+
+					System.out.println("aaa" + tbl + "aaa");
+					if (!JOINING_OR_LEAVING) {
+						new RemoveUserActivity().execute(tbl).get();
+
+					} else {
+						new AddUserActivity().execute(tbl).get();
+					}
+
+				}
+
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			} catch (ExecutionException e) {
+				e.printStackTrace();
+			}
 
 		}
 	}
@@ -121,57 +158,4 @@ public class MenuActivity extends Activity {
 		startActivityForResult(intent, NFC_REQUEST);
 	}
 
-	public static boolean removeUser(String tid) {
-
-		String course = "err";
-		int count = -1;
-
-		JSONObject jsonGet = jParser.makeHttpRequest(url_all_products, "GET",
-				params);
-
-		boolean tid_exists = false;
-
-		try {
-			// Checking for SUCCESS TAG
-			int success = jsonGet.getInt(TAG_SUCCESS);
-
-			if (success == 1) {
-				// products found
-				// Getting Array of Products
-				JSONArray hillman = jsonGet.getJSONArray(TAG_DBTABLE);
-
-				// looping through All Products
-				for (int i = 0; i < hillman.length(); i++) {
-					JSONObject c = hillman.getJSONObject(i);
-
-					// Storing each json item in variable
-					int temp_id = c.getInt(TAG_TID);
-					String temp_course = c.getString(TAG_COURSE);
-					int temp_count = c.getInt(TAG_COUNT);
-
-					if (Integer.valueOf(tid) == temp_id && temp_count > 0) {
-
-						count = temp_count - 1;
-						System.out.println(count);
-						course = temp_course;
-						System.out.println(course);
-						tid_exists = true;
-					} else {
-						System.err
-								.println("The count is zero. cannot be set less than zero: "
-										+ temp_count);
-					}
-
-				}
-
-			} else {
-				System.err.println("error");
-			}
-		} catch (JSONException e) {
-			e.printStackTrace();
-		}
-
-		return false;
-
-	}
 }
