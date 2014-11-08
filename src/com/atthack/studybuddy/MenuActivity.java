@@ -1,5 +1,13 @@
 package com.atthack.studybuddy;
 
+import java.util.ArrayList;
+
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import com.atthack.studybuddy.R;
 
 import android.app.Activity;
@@ -12,6 +20,8 @@ import android.widget.Toast;
 
 public class MenuActivity extends Activity {
 
+	private static ArrayList<NameValuePair> params = new ArrayList<NameValuePair>();
+
 	private Button studying_around_me_button;
 	private Button see_open_tables_button;
 	private Button change_subject_button;
@@ -21,22 +31,21 @@ public class MenuActivity extends Activity {
 	String table_number = "";
 
 	static final int NFC_REQUEST = 1;
-	
-	
+
 	private static final String TAG_SUCCESS = "success";
-    private static final String TAG_DBTABLE = "hillman";
+	private static final String TAG_DBTABLE = "hillman";
 
-    private static final String TAG_COURSE = "course";
-    private static final String TAG_TID = "tid";
-    private static final String TAG_COUNT = "count";
-    
-    private static JSONParser jParser = new JSONParser();
-    
- // url to get all products list
-    private static String url_all_products = "http://studybud.web44.net/get_all_products.php";
+	private static final String TAG_COURSE = "course";
+	private static final String TAG_TID = "tid";
+	private static final String TAG_COUNT = "count";
 
-    // url to update products
-    private static String url_update_product = "http://studybud.web44.net/update_product.php";
+	private static JSONParser jParser = new JSONParser();
+
+	// url to get all products list
+	private static String url_all_products = "http://studybud.web44.net/get_all_products.php";
+
+	// url to update products
+	private static String url_update_product = "http://studybud.web44.net/update_product.php";
 
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -77,6 +86,8 @@ public class MenuActivity extends Activity {
 
 			public void onClick(View arg0) {
 				System.out.println("change subject");
+
+				removeUser("1");
 			}
 		});
 
@@ -109,54 +120,58 @@ public class MenuActivity extends Activity {
 		Intent intent = new Intent(this, NFCReader.class);
 		startActivityForResult(intent, NFC_REQUEST);
 	}
-	
-	
-	
+
 	public static boolean removeUser(String tid) {
 
 		String course = "err";
 		int count = -1;
 
-		JSONObject jsonGet = jParser.makeHttpRequest(url_all_products, "GET", params);
+		JSONObject jsonGet = jParser.makeHttpRequest(url_all_products, "GET",
+				params);
 
 		boolean tid_exists = false;
 
 		try {
-		    // Checking for SUCCESS TAG
-		    int success = jsonGet.getInt(TAG_SUCCESS);
+			// Checking for SUCCESS TAG
+			int success = jsonGet.getInt(TAG_SUCCESS);
 
-		    if (success == 1) {
-			// products found
-			// Getting Array of Products
-			JSONArray hillman = jsonGet.getJSONArray(TAG_DBTABLE);
+			if (success == 1) {
+				// products found
+				// Getting Array of Products
+				JSONArray hillman = jsonGet.getJSONArray(TAG_DBTABLE);
 
-			// looping through All Products
-			for (int i = 0; i < hillman.length(); i++) {
-			    JSONObject c = hillman.getJSONObject(i);
+				// looping through All Products
+				for (int i = 0; i < hillman.length(); i++) {
+					JSONObject c = hillman.getJSONObject(i);
 
-			    // Storing each json item in variable
-			    int temp_id = c.getInt(TAG_TID);
-			    String temp_course = c.getString(TAG_COURSE);
-			    int temp_count = c.getInt(TAG_COUNT);
+					// Storing each json item in variable
+					int temp_id = c.getInt(TAG_TID);
+					String temp_course = c.getString(TAG_COURSE);
+					int temp_count = c.getInt(TAG_COUNT);
 
-			    if (Integer.valueOf(tid) == temp_id && temp_count > 0){
-				
-				count = temp_count - 1;
-				System.out.println(count);
-				course = temp_course;
-				System.out.println(course);
-				tid_exists = true;
-			    } else {
-				System.err.println("The count is zero. cannot be set less than zero: " + temp_count);
-			    }
+					if (Integer.valueOf(tid) == temp_id && temp_count > 0) {
 
+						count = temp_count - 1;
+						System.out.println(count);
+						course = temp_course;
+						System.out.println(course);
+						tid_exists = true;
+					} else {
+						System.err
+								.println("The count is zero. cannot be set less than zero: "
+										+ temp_count);
+					}
+
+				}
+
+			} else {
+				System.err.println("error");
 			}
-
-		    } else {
-			System.err.println("error");
-		    }
 		} catch (JSONException e) {
-		    e.printStackTrace();
-		} 
+			e.printStackTrace();
+		}
 
+		return false;
+
+	}
 }
