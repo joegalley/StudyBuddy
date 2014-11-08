@@ -1,14 +1,26 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical" >
+    android:orientation="vertical"
+    tools:ignore="TextFields" >
+
+    <TextView
+        android:id="@+id/textView1"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:paddingLeft="150dp"
+        android:paddingTop="20dp"
+        android:text="StudyBuddy"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="#0199CA" />
 
     <EditText
-        android:id="@+id/username_input"
-        android:layout_width="195dip"
+        android:id="@+id/editText1"
+        android:layout_width="432dp"
         android:layout_height="wrap_content"
-        android:hint="Enter username"
-        android:imeOptions="actionDone"
+        android:ems="10"
+        android:hint="Enter username..."
         android:maxLength="16"
         android:maxLines="1"
         android:selectAllOnFocus="true"
@@ -16,26 +28,34 @@
 
     <EditText
         android:id="@+id/password_input"
-        android:layout_width="195dip"
-        android:layout_height="wrap_content"
+        android:layout_width="429dp"
+        android:layout_height="47dp"
+        android:ems="10"
         android:hint="Enter password..."
         android:imeOptions="actionDone"
+        android:inputType="textPassword"
         android:maxLength="16"
         android:maxLines="1"
         android:selectAllOnFocus="true"
         android:singleLine="true" />
 
-    <LinearLayout
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal" >
+    <android.widget.ViewFlipper
+        android:id="@+id/viewFlipper1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 
-        <Button
-            android:id="@+id/login_button"
-            android:layout_width="0dip"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:hint="LOGIN" />
-    </LinearLayout>
+    <Button
+        android:id="@+id/login_button"
+        android:layout_width="224dp"
+        android:layout_height="47dp"
+        android:hint="Submit"
+        android:onClick="sendMessage"
+        android:padding="15dp" />
+
+    <android.widget.ImageView
+        android:id="@+id/imageView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/sb_launcher4" />
 
 </LinearLayout>

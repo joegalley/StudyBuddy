@@ -66,18 +66,13 @@ public class AddUserActivity extends AsyncTask<String, Void, Void> {
 					String temp_course = c.getString(TAG_COURSE);
 					int temp_count = c.getInt(TAG_COUNT);
 
-					if (Integer.valueOf(tid) == temp_id && temp_count > 0) {
+					if (Integer.valueOf(tid) == temp_id) {
 
 						count = temp_count + 1;
 						System.out.println(count);
 						course = temp_course;
 						System.out.println(course);
 						tid_exists = true;
-					} else if (Integer.valueOf(tid) == temp_id
-							&& !(temp_count > 0)) {
-						System.err
-								.println("The count is zero. cannot be set less than zero: "
-										+ temp_count);
 					}
 
 				}
